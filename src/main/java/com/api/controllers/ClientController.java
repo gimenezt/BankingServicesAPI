@@ -1,10 +1,10 @@
 package com.api.controllers;
 
+import com.api.domain.client.ClientRepository;
+import com.api.domain.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.api.domain.client.ClientRepository;
-import com.api.domain.client.Client;
 import jakarta.validation.Valid;
 import java.util.Optional;
 
