@@ -1,1 +1,4 @@
-C:\Users\lilia\Documents\GitHub\BankingServicesAPI\src\main\java\com\banking\api\BankingServicesApiApplication.java
+C:\Users\lilia\Documents\GitHub\BankingServicesAPI\src\main\java\com\api\BankingServicesApiApplication.java
+C:\Users\lilia\Documents\GitHub\BankingServicesAPI\src\main\java\com\api\domain\client\Client.java
+C:\Users\lilia\Documents\GitHub\BankingServicesAPI\src\main\java\com\api\domain\client\ClientRepository.java
+C:\Users\lilia\Documents\GitHub\BankingServicesAPI\src\main\java\com\api\controllers\ClientController.java
