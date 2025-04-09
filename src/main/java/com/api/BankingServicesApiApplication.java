@@ -1,4 +1,4 @@
-package com.banking.api;
+package com.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,4 +10,3 @@ public class BankingServicesApiApplication {
         SpringApplication.run(BankingServicesApiApplication.class, args);
     }
 }
-
