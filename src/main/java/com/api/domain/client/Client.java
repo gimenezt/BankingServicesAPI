@@ -3,6 +3,7 @@ package com.api.domain.client;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 
 @Entity
@@ -20,7 +21,7 @@ public class Client {
     private String accountNumber;
 
     @NotNull
-    private Double balance;
+    private BigDecimal  balance;
 
     // getters e setters
     public Long getId() { return id; }
@@ -31,6 +32,6 @@ public class Client {
     public String getAccountNumber() { return accountNumber; }
     public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
 
-    public Double getBalance() { return balance; }
-    public void setBalance(Double balance) { this.balance = balance; }
+    public BigDecimal  getBalance() { return balance; }
+    public void setBalance(BigDecimal  balance) { this.balance = balance; }
 }

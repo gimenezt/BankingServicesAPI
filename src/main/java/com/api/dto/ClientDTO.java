@@ -2,6 +2,7 @@ package com.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 public class ClientDTO {
     @NotBlank
@@ -11,7 +12,7 @@ public class ClientDTO {
     private String accountNumber;
 
     @NotNull
-    private Double balance;
+    private BigDecimal balance;
 
     // Getters e setters
     public String getName() { return name; }
@@ -20,6 +21,6 @@ public class ClientDTO {
     public String getAccountNumber() { return accountNumber; }
     public void setAccountNumber(String accountNumber) { this.accountNumber = accountNumber; }
 
-    public Double getBalance() { return balance; }
-    public void setBalance(Double balance) { this.balance = balance; }
+    public BigDecimal getBalance() { return balance; }
+    public void setBalance(BigDecimal balance) { this.balance = balance; }
 }

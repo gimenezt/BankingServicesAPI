@@ -5,10 +5,12 @@ import com.api.domain.client.ClientRepository;
 import com.api.domain.transaction.Transaction;
 import com.api.domain.transaction.TransactionRepository;
 import com.api.dto.TransactionDTO;
+import com.api.utils.BigDecimalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -40,16 +42,18 @@ public class TransactionServices {
             return transactionRepository.save(transaction);
         }
 
-        if (originClient.get().getBalance() < dto.getAmount()) {
+        Client origin = originClient.get();
+        Client destination = destinationClient.get();
+
+        BigDecimal amountAsBigDecimal = BigDecimal.valueOf(dto.getAmount());
+
+        if (BigDecimalUtils.isLessThan(origin.getBalance(), amountAsBigDecimal)) {
             transaction.setTransactionStatus("FAILED");
             return transactionRepository.save(transaction);
         }
 
-        Client origin = originClient.get();
-        Client destination = destinationClient.get();
-
-        origin.setBalance(origin.getBalance() - dto.getAmount());
-        destination.setBalance(destination.getBalance() + dto.getAmount());
+        origin.setBalance(BigDecimalUtils.subtract(origin.getBalance(), amountAsBigDecimal));
+        destination.setBalance(BigDecimalUtils.add(destination.getBalance(), amountAsBigDecimal));
 
         clientRepository.save(origin);
         clientRepository.save(destination);
