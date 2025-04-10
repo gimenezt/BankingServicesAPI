@@ -2,6 +2,7 @@ package com.api.controllers;
 
 import com.api.domain.client.ClientRepository;
 import com.api.domain.client.Client;
+import com.api.dto.ClientDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,23 @@ public class ClientController {
     @Autowired
     private ClientRepository clientRepository;
 
+    // Cadastrar cliente
+    @PostMapping
+    public ResponseEntity register(@RequestBody @Valid ClientDTO clientDTO) {
+        if (clientRepository.existsByAccountNumber(clientDTO.getAccountNumber())) {
+            return ResponseEntity.badRequest().body("Conta já existe.");
+        }
+
+        Client client = new Client();
+        client.setName(clientDTO.getName());
+        client.setAccountNumber(clientDTO.getAccountNumber());
+        client.setBalance(clientDTO.getBalance());
+
+        Client saveObj = clientRepository.save(client);
+        return ResponseEntity.ok(saveObj);
+    }
+
+    
     // Lista de clientes
     @GetMapping
     public ResponseEntity getClientList() {
@@ -23,16 +41,6 @@ public class ClientController {
         return ResponseEntity.ok(clientsList);
     }
 
-    // Cadastrar cliente
-    @PostMapping
-    public ResponseEntity register(@RequestBody @Valid Client client) {
-        if (clientRepository.existsByAccountNumber(client.getAccountNumber())) {
-            return ResponseEntity.badRequest().body(".");
-        }
-
-        Client saveObj = clientRepository.save(client);
-        return ResponseEntity.ok(saveObj);
-    }
 
     // Retorna cliente pelo numero da conta
     @GetMapping("/{accountNumber}")
