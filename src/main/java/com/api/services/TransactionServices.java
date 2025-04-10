@@ -35,7 +35,7 @@ public class TransactionServices {
             return transactionRepository.save(transaction);
         }
 
-        if (dto.getAmount() > 100) {
+        if (dto.getAmount() > 100 || dto.getAmount() <= 0) {
             transaction.setTransactionStatus("FAILED");
             return transactionRepository.save(transaction);
         }
