@@ -21,10 +21,10 @@ public class TransactionController {
     public ResponseEntity findByAccountOrigin(@PathVariable @Valid String accountOrigin) {
         List<Transaction> transaction = transactionRepository.findByAccountOriginOrderByDatetimeDesc(accountOrigin);
 
-        if (transaction.isPresent()) {
-            return ResponseEntity.ok(transaction.get());
-        } else {
+        if (transaction.isEmpty()) {
             return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(transaction);
         }
     }
 }
