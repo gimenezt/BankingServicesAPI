@@ -4,6 +4,7 @@ import com.api.domain.client.Client;
 import com.api.domain.client.ClientRepository;
 import com.api.domain.transaction.Transaction;
 import com.api.domain.transaction.TransactionRepository;
+import com.api.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,45 +21,40 @@ public class TransactionServices {
     private TransactionRepository transactionRepository;
 
     @Transactional
-    public Transaction processTransaction(String accountOrigin, String accountDestination, Double amount) {
+    public Transaction processTransaction(TransactionDTO dto) {
         Transaction transaction = new Transaction();
-        transaction.setAccountOrigin(accountOrigin);
-        transaction.setAccountDestination(accountDestination);
-        transaction.setAmount(amount);
+        transaction.setAccountOrigin(dto.getAccountOrigin());
+        transaction.setAccountDestination(dto.getAccountDestination());
+        transaction.setAmount(dto.getAmount());
 
-        Optional<Client> originClient = clientRepository.findByAccountNumber(accountOrigin);
-        Optional<Client> destinationClient = clientRepository.findByAccountNumber(accountDestination);
+        Optional<Client> originClient = clientRepository.findByAccountNumber(dto.getAccountOrigin());
+        Optional<Client> destinationClient = clientRepository.findByAccountNumber(dto.getAccountDestination());
 
-        // se a conta origem ou conta destino for vazia, salva como transacao falha
         if (originClient.isEmpty() || destinationClient.isEmpty()) {
             transaction.setTransactionStatus("FAILED");
             return transactionRepository.save(transaction);
         }
 
-        // se a transacao for acima de 100 reais, salva como transacao falha
-        if (amount > 100) {
+        if (dto.getAmount() > 100) {
             transaction.setTransactionStatus("FAILED");
             return transactionRepository.save(transaction);
         }
 
-        // se o saldo da conta origem for menor do que a transacao, salva como transacao falha
-        if (originClient.get().getBalance() < amount) {
+        if (originClient.get().getBalance() < dto.getAmount()) {
             transaction.setTransactionStatus("FAILED");
             return transactionRepository.save(transaction);
         }
 
-        Client origin = originClient.orElseThrow(() -> new RuntimeException("Conta de origem não encontrada"));
-        Client destination = destinationClient.orElseThrow(() -> new RuntimeException("Conta de destino não encontrada"));
+        Client origin = originClient.get();
+        Client destination = destinationClient.get();
 
-        origin.setBalance(origin.getBalance() - amount);
-        destination.setBalance(destination.getBalance() + amount);
+        origin.setBalance(origin.getBalance() - dto.getAmount());
+        destination.setBalance(destination.getBalance() + dto.getAmount());
 
         clientRepository.save(origin);
         clientRepository.save(destination);
 
         transaction.setTransactionStatus("SUCCESS");
-        transactionRepository.save(transaction);
-
-        return transaction;
+        return transactionRepository.save(transaction);
     }
 }

@@ -13,7 +13,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/client")
 public class ClientController {
-
     @Autowired
     private ClientRepository clientRepository;
 
@@ -33,7 +32,7 @@ public class ClientController {
         return ResponseEntity.ok(saveObj);
     }
 
-    
+
     // Lista de clientes
     @GetMapping
     public ResponseEntity getClientList() {

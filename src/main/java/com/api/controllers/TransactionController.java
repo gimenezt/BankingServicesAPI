@@ -2,6 +2,8 @@ package com.api.controllers;
 
 import com.api.domain.transaction.Transaction;
 import com.api.domain.transaction.TransactionRepository;
+import com.api.dto.TransactionDTO;
+import com.api.services.TransactionServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,9 @@ public class TransactionController {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private TransactionServices transactionServices;
 
     // Retorna lista de transações por numero de conta origem
     @GetMapping("/{accountOrigin}")
