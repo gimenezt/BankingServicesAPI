@@ -32,4 +32,11 @@ public class TransactionController {
             return ResponseEntity.ok(transaction);
         }
     }
+
+
+    @PostMapping
+    public ResponseEntity createTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
+        Transaction transaction = transactionServices.processTransaction(transactionDTO);
+        return ResponseEntity.ok(transaction);
+    }
 }
