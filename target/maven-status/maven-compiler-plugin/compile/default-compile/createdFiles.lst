@@ -1,4 +1,0 @@
-com\api\controllers\ClientController.class
-com\api\domain\client\Client.class
-com\api\BankingServicesApiApplication.class
-com\api\domain\client\ClientRepository.class
