@@ -39,4 +39,12 @@ public class TransactionController {
         Transaction transaction = transactionServices.processTransaction(transactionDTO);
         return ResponseEntity.ok(transaction);
     }
+
+
+    // Lista de transacoes
+    @GetMapping
+    public ResponseEntity getTransactionList() {
+        var transactionList = transactionRepository.findAll();
+        return ResponseEntity.ok(transactionList);
+    }
 }
