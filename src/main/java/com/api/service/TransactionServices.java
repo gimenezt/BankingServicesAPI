@@ -1,20 +1,34 @@
 package com.api.service;
 
-import com.api.model.entity.Client;
-import com.api.model.repository.ClientRepository;
-import com.api.model.entity.Transaction;
-import com.api.model.repository.TransactionRepository;
+import com.api.business.*;
 import com.api.model.dto.TransactionDTO;
-import com.api.utils.BigDecimalUtils;
+import com.api.model.entity.Client;
+import com.api.model.entity.Transaction;
+import com.api.model.repository.ClientRepository;
+import com.api.model.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Service
 public class TransactionServices {
+
+    @Autowired
+    private ClientExistsValidator clientExistsValidator;
+
+    @Autowired
+    private TransactionAmountValidator transactionAmountValidator;
+
+    @Autowired
+    private ClientBalanceValidator clientBalanceValidator;
+
+    @Autowired
+    private BalanceUpdater balanceUpdater;
+
+    @Autowired
+    private TransactionBuilder transactionBuilder;
 
     @Autowired
     private ClientRepository clientRepository;
@@ -26,38 +40,31 @@ public class TransactionServices {
 
     @Transactional
     public Transaction processTransaction(TransactionDTO dto) {
-        synchronized (lockObject) {
-            Transaction transaction = new Transaction();
-            transaction.setAccountOrigin(dto.getAccountOrigin());
-            transaction.setAccountDestination(dto.getAccountDestination());
-            transaction.setAmount(dto.getAmount());
+        synchronized (lockObject) {     // para tratar concorrencia
+            Transaction transaction = transactionBuilder.build(dto);
 
-            Optional<Client> originClient = clientRepository.findByAccountNumber(dto.getAccountOrigin());
-            Optional<Client> destinationClient = clientRepository.findByAccountNumber(dto.getAccountDestination());
-
-            if (originClient.isEmpty() || destinationClient.isEmpty()) {
+            // validando existencia das contas
+            if (!clientExistsValidator.clientsExist(dto.getAccountOrigin(), dto.getAccountDestination())) {
                 transaction.setTransactionStatus("FAILED");
                 return transactionRepository.save(transaction);
             }
 
-            if (dto.getAmount() > 100 || dto.getAmount() <= 0) {
+            // validando de o valor a transacionar eh valido
+            if (!transactionAmountValidator.isValid(dto.getAmount())) {
                 transaction.setTransactionStatus("FAILED");
                 return transactionRepository.save(transaction);
             }
 
-            Client origin = originClient.get();
-            Client destination = destinationClient.get();
+            Client origin = clientRepository.findByAccountNumber(dto.getAccountOrigin()).get();
+            Client destination = clientRepository.findByAccountNumber(dto.getAccountDestination()).get();
+            BigDecimal amount = BigDecimal.valueOf(dto.getAmount());
 
-            BigDecimal amountAsBigDecimal = BigDecimal.valueOf(dto.getAmount());
-
-            if (BigDecimalUtils.isLessThan(origin.getBalance(), amountAsBigDecimal)) {
+            if (!clientBalanceValidator.hasSufficientBalance(origin, amount)) {
                 transaction.setTransactionStatus("FAILED");
                 return transactionRepository.save(transaction);
             }
 
-            origin.setBalance(BigDecimalUtils.subtract(origin.getBalance(), amountAsBigDecimal));
-            destination.setBalance(BigDecimalUtils.add(destination.getBalance(), amountAsBigDecimal));
-
+            balanceUpdater.updateBalances(origin, destination, amount);
             clientRepository.save(origin);
             clientRepository.save(destination);
 
