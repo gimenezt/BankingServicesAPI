@@ -1,10 +1,10 @@
-package com.api.services;
+package com.api.service;
 
-import com.api.domain.client.Client;
-import com.api.domain.client.ClientRepository;
-import com.api.domain.transaction.Transaction;
-import com.api.domain.transaction.TransactionRepository;
-import com.api.dto.TransactionDTO;
+import com.api.model.entity.Client;
+import com.api.model.repository.ClientRepository;
+import com.api.model.entity.Transaction;
+import com.api.model.repository.TransactionRepository;
+import com.api.model.dto.TransactionDTO;
 import com.api.utils.BigDecimalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,9 @@
-package com.api.controllers;
+package com.api.controller;
 
-import com.api.domain.transaction.Transaction;
-import com.api.domain.transaction.TransactionRepository;
-import com.api.dto.TransactionDTO;
-import com.api.services.TransactionServices;
+import com.api.model.entity.Transaction;
+import com.api.model.repository.TransactionRepository;
+import com.api.model.dto.TransactionDTO;
+import com.api.service.TransactionServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

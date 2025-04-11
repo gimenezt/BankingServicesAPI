@@ -1,4 +1,4 @@
-package com.api.domain.transaction;
+package com.api.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

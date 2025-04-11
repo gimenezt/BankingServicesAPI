@@ -1,8 +1,8 @@
-package com.api.controllers;
+package com.api.controller;
 
-import com.api.domain.client.ClientRepository;
-import com.api.domain.client.Client;
-import com.api.dto.ClientDTO;
+import com.api.model.repository.ClientRepository;
+import com.api.model.entity.Client;
+import com.api.model.dto.ClientDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
