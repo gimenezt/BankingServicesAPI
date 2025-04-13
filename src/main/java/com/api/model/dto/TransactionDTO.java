@@ -4,13 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class TransactionDTO {
-    @NotBlank
+    @NotBlank(message = "O 'accountOrigin' não pode ser nulo ou vazio")
     private String accountOrigin;
 
-    @NotBlank
+    @NotBlank(message = "O 'accountDestination' não pode ser nulo ou vazio")
     private String accountDestination;
 
-    @NotNull
+    @NotNull(message = "O 'amount' não pode ser nulo ou vazio")
     private Double amount;
 
     // getters e setters
