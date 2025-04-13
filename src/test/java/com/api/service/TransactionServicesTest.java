@@ -4,7 +4,6 @@ import com.api.model.dto.TransactionDTO;
 import com.api.model.entity.Client;
 import com.api.model.entity.Transaction;
 import com.api.model.repository.ClientRepository;
-import com.api.model.repository.TransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

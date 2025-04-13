@@ -1,6 +1,5 @@
 package com.api.business;
 
-import com.api.exception.CustomException;
 import com.api.model.entity.Client;
 import com.api.utils.BigDecimalUtils;
 import org.springframework.stereotype.Component;
