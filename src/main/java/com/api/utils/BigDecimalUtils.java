@@ -2,6 +2,7 @@ package com.api.utils;
 
 import java.math.BigDecimal;
 
+// Operações com BigDecimals
 public class BigDecimalUtils {
 
     public static boolean isLessThan(BigDecimal a, BigDecimal b) {

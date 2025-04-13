@@ -9,14 +9,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ClientBalanceValidatorTest {
     @Test
-    public void tesBalanceValidator() {
+    public void testBalanceValidator() {
         ClientBalanceValidator validator = new ClientBalanceValidator();
 
         Client origin = new Client();
         origin.setBalance(new BigDecimal("100.00"));
 
+        // Teste para transacionar um valor menor que o saldo
         assertTrue(validator.hasSufficientBalance(origin, new BigDecimal("70.00")));
+
+        // Teste para transacionar um valor igual ao saldo
         assertTrue(validator.hasSufficientBalance(origin, new BigDecimal("100.00")));
+
+        // Teste para transacionar um valor maior que o saldo
         assertFalse(validator.hasSufficientBalance(origin, new BigDecimal("120.00")));
     }
 }

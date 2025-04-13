@@ -76,10 +76,9 @@ public class TransactionServices {
                 throw new CustomException("Valor da transação inválido.", 400);
             }
 
-            // Busca clientes
+            // Busca clientes origem e destino e define valor da transação
             Client origin = clientRepository.findByAccountNumber(dto.getAccountOrigin()).get();
             Client destination = clientRepository.findByAccountNumber(dto.getAccountDestination()).get();
-
             BigDecimal amount = BigDecimal.valueOf(dto.getAmount());
 
             // Valida saldo
@@ -89,8 +88,8 @@ public class TransactionServices {
                 throw new CustomException("Saldo insuficiente para realizar a transação.", 400);
             }
 
+            // Realiza atualização de saldos
             balanceUpdater.updateBalances(origin, destination, amount);
-
             clientRepository.save(origin);
             clientRepository.save(destination);
 

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TransactionBuilderTest {
 
     @Test
+    // Constrói a instância de Transaction
     public void testBuildTransaction() {
         TransactionBuilder builder = new TransactionBuilder();
 

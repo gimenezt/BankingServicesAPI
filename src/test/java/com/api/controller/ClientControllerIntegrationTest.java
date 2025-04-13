@@ -38,6 +38,8 @@ class ClientControllerIntegrationTest {
     }
 
     @Test
+
+    // Registro com sucesso de cliente
     void registerClient_success() throws Exception {
         ClientDTO client = new ClientDTO();
         client.setName("Lilian");
@@ -54,6 +56,7 @@ class ClientControllerIntegrationTest {
     }
 
     @Test
+    // Teste para registro de contas duplicadas
     void registerClient_duplicateAccountNumber() throws Exception {
         Client existingClient = new Client();
         existingClient.setName("Ana");
@@ -74,6 +77,7 @@ class ClientControllerIntegrationTest {
     }
 
     @Test
+    // Teste para verificar retorno de lista de clientes
     void clientList() throws Exception {
         Client client1 = new Client();
         client1.setName("Carlos");
@@ -104,6 +108,7 @@ class ClientControllerIntegrationTest {
 
 
     @Test
+    // Teste para trazer informações do cliente que existe pelo número de conta
     void findClient_success() throws Exception {
         Client client = new Client();
         client.setName("Julia");
@@ -117,6 +122,7 @@ class ClientControllerIntegrationTest {
     }
 
     @Test
+    // Teste para trazer informações do cliente que não existe pelo número de conta
     void findClient_clientDoesNotExists() throws Exception {
         mockMvc.perform(get("/client/00000"))
                 .andExpect(status().isNotFound());

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Component
 public class ClientBalanceValidator {
 
-    // verifica se o cliente possui saldo suficiente para transacao
+    // Verifica se o cliente possui saldo suficiente para transação
     public boolean hasSufficientBalance(Client origin, BigDecimal amount) {
         return !BigDecimalUtils.isLessThan(origin.getBalance(), amount);
     }

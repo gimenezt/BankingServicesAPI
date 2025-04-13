@@ -21,7 +21,7 @@ public class TransactionController {
     @Autowired
     private TransactionServices transactionServices;
 
-    // Retorna lista de transações por numero de conta origem
+    // Retorna lista de transações por número de conta informado em ordem decrescente de datetime
     @GetMapping("/{accountOrigin}")
     public ResponseEntity<?> findByAccountOrigin(@PathVariable String accountOrigin) {
         List<Transaction> transactions = transactionRepository.findByAccountOriginOrderByDatetimeDesc(accountOrigin);
@@ -33,14 +33,14 @@ public class TransactionController {
         return ResponseEntity.ok(transactions);
     }
 
-    // Criar nova transação
+    // Processa nova transação
     @PostMapping
     public ResponseEntity<?> createTransaction(@RequestBody TransactionDTO transactionDTO) {
         Transaction transaction = transactionServices.processTransaction(transactionDTO);
         return ResponseEntity.ok(transaction);
     }
 
-    // Lista todas as transações
+    // Lista as transações registradas
     @GetMapping
     public ResponseEntity<?> getTransactionList() {
         var transactionList = transactionRepository.findAll();

@@ -21,7 +21,7 @@ public class Client {
     private String accountNumber;
 
     @NotNull
-    private BigDecimal  balance;
+    private BigDecimal balance;
 
     // getters e setters
     public Long getId() { return id; }

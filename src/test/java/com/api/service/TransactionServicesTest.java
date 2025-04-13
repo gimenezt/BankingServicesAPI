@@ -25,14 +25,13 @@ class TransactionServicesTest {
     @Autowired
     private ClientRepository clientRepository;
 
-    @Autowired
-    private TransactionRepository transactionRepository;
-
+    // Limpa a tabela antes de cada teste
     @BeforeEach
     void setup() {
-        clientRepository.deleteAll(); // limpa a tabela antes de cada teste
+        clientRepository.deleteAll();
     }
 
+    // Teste de transação com sucesso
     @Test
     void testProcessTransaction_success() {
         Client origin = new Client();
@@ -60,6 +59,7 @@ class TransactionServicesTest {
         assertEquals(new BigDecimal("300.00"), clientRepository.findByAccountNumber("223456").get().getBalance());
     }
 
+    // Teste de transação para uma conta que não existe
     @Test
     void testProcessTransaction_accountDoesNotExist() {
         Client origin = new Client();
@@ -69,7 +69,7 @@ class TransactionServicesTest {
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("123456");
-        dto.setAccountDestination("999999"); // nao existe
+        dto.setAccountDestination("999999"); // não existe
         dto.setAmount(100.0);
 
         Transaction result = transactionServices.processTransaction(dto);
@@ -77,6 +77,7 @@ class TransactionServicesTest {
         assertEquals("FAILED", result.getTransactionStatus());
     }
 
+    // Teste de transação com saldo insuficiente
     @Test
     void testProcessTransaction_insufficientBalance() {
         Client origin = new Client();
@@ -96,6 +97,32 @@ class TransactionServicesTest {
         dto.setAccountOrigin("123456");
         dto.setAccountDestination("223456");
         dto.setAmount(100.0); // maior do que o saldo do cliente origem
+
+        Transaction result = transactionServices.processTransaction(dto);
+
+        assertEquals("FAILED", result.getTransactionStatus());
+    }
+
+    // Teste de transação com valor de transação fora da regra de negócio
+    @Test
+    void testProcessTransaction_amountBiggerThan100() {
+        Client origin = new Client();
+        origin.setName("Caio");
+        origin.setAccountNumber("123456");
+        origin.setBalance(new BigDecimal("1000.00"));
+
+        Client destination = new Client();
+        destination.setName("Ana");
+        destination.setAccountNumber("223456");
+        destination.setBalance(new BigDecimal("200.00"));
+
+        clientRepository.save(origin);
+        clientRepository.save(destination);
+
+        TransactionDTO dto = new TransactionDTO();
+        dto.setAccountOrigin("123456");
+        dto.setAccountDestination("223456");
+        dto.setAmount(200.00);
 
         Transaction result = transactionServices.processTransaction(dto);
 

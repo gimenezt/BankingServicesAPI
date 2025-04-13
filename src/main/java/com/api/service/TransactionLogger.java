@@ -13,6 +13,7 @@ public class TransactionLogger {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    // Método para registros de transações falhas
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logFailedTransaction(Transaction transaction) {
         transactionRepository.save(transaction);

@@ -8,6 +8,7 @@ class AccountEqualValidatorTest {
 
     private final AccountEqualValidator validator = new AccountEqualValidator();
 
+    // Teste para quando as contas são iguais
     @Test
     void whenAccountsAreEqual_true() {
         String origin = "123456";
@@ -18,6 +19,7 @@ class AccountEqualValidatorTest {
         assertTrue(result, "Should return true when accounts are equal");
     }
 
+    // Teste para quando as contas são diferentes
     @Test
     void whenAccountsAreDifferent_false() {
         String origin = "123456";

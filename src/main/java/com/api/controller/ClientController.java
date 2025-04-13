@@ -17,9 +17,10 @@ public class ClientController {
     @Autowired
     private ClientRepository clientRepository;
 
-    // Cadastrar cliente
+    // Registra novos clientes
     @PostMapping
     public ResponseEntity register(@RequestBody @Valid ClientDTO clientDTO) {
+        // Verifica se a conta já existe
         if (clientRepository.existsByAccountNumber(clientDTO.getAccountNumber())) {
             throw new CustomException("Conta já existe.", 400);
         }
@@ -34,14 +35,14 @@ public class ClientController {
         return ResponseEntity.ok(savedClient);
     }
 
-    // Lista de clientes
+    // Lista os clientes registrados
     @GetMapping
     public ResponseEntity getClientList() {
         var clientsList = clientRepository.findAll();
         return ResponseEntity.ok(clientsList);
     }
 
-    // Retorna cliente pelo numero da conta
+    // Retorna informações do cliente pelo número da conta informado
     @GetMapping("/{accountNumber}")
     public ResponseEntity findByAccountNumber(@PathVariable @Valid String accountNumber) {
         Optional<Client> client = clientRepository.findByAccountNumber(accountNumber);

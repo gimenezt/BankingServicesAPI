@@ -12,7 +12,6 @@ public class BalanceUpdater {
 
     // Atualiza os saldos das contas envolvidas na transação
     public void updateBalances(Client origin, Client destination, BigDecimal amount) {
-        // Atualiza os saldos
         origin.setBalance(BigDecimalUtils.subtract(origin.getBalance(), amount));
         destination.setBalance(BigDecimalUtils.add(destination.getBalance(), amount));
     }
