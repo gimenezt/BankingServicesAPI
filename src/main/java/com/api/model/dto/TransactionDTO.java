@@ -13,7 +13,7 @@ public class TransactionDTO {
     @NotNull
     private Double amount;
 
-    // Getters e setters
+    // getters e setters
     public String getAccountOrigin() {
         return accountOrigin;
     }

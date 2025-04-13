@@ -40,6 +40,7 @@ public class TransactionServices {
         synchronized (lockObject) {     // para tratar concorrencia
             Transaction transaction = transactionBuilder.build(dto);
 
+            // validando existencia das contas
             boolean originExists = clientRepository.existsByAccountNumber(dto.getAccountOrigin());
             boolean destinationExists = clientRepository.existsByAccountNumber(dto.getAccountDestination());
 
@@ -58,11 +59,13 @@ public class TransactionServices {
             Client destination = clientRepository.findByAccountNumber(dto.getAccountDestination()).get();
             BigDecimal amount = BigDecimal.valueOf(dto.getAmount());
 
+            // validando se ha saldo suficiente
             if (!clientBalanceValidator.hasSufficientBalance(origin, amount)) {
                 transaction.setTransactionStatus("FAILED");
                 return transactionRepository.save(transaction);
             }
 
+            // atualizando saldo da conta origem e da conta destino
             balanceUpdater.updateBalances(origin, destination, amount);
             clientRepository.save(origin);
             clientRepository.save(destination);

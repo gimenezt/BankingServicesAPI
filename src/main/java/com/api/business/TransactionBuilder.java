@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TransactionBuilder {
 
+    // cria a instancia de transaction
     public Transaction build(TransactionDTO dto) {
         Transaction transaction = new Transaction();
         transaction.setAccountOrigin(dto.getAccountOrigin());
