@@ -5,13 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class ClientDTO {
-    @NotBlank
+    @NotBlank(message = "O 'name' não pode ser nulo ou vazio")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "O 'accountNumber' não pode ser nulo ou vazio")
     private String accountNumber;
 
-    @NotNull
+    @NotNull(message = "O 'balance' não pode ser nulo ou vazio")
     private BigDecimal balance;
 
     // getters e setters

@@ -3,16 +3,17 @@ package com.api.controller;
 import com.api.model.repository.ClientRepository;
 import com.api.model.entity.Client;
 import com.api.model.dto.ClientDTO;
+import com.api.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.Optional;
 
-
 @RestController
 @RequestMapping("/client")
 public class ClientController {
+
     @Autowired
     private ClientRepository clientRepository;
 
@@ -20,7 +21,7 @@ public class ClientController {
     @PostMapping
     public ResponseEntity register(@RequestBody @Valid ClientDTO clientDTO) {
         if (clientRepository.existsByAccountNumber(clientDTO.getAccountNumber())) {
-            return ResponseEntity.badRequest().body("Conta já existe.");
+            throw new CustomException("Conta já existe.", 400);
         }
 
         Client client = new Client();
@@ -28,10 +29,10 @@ public class ClientController {
         client.setAccountNumber(clientDTO.getAccountNumber());
         client.setBalance(clientDTO.getBalance());
 
-        Client saveObj = clientRepository.save(client);
-        return ResponseEntity.ok(saveObj);
+        // Salva o cliente no banco
+        Client savedClient = clientRepository.save(client);
+        return ResponseEntity.ok(savedClient);
     }
-
 
     // Lista de clientes
     @GetMapping
@@ -39,7 +40,6 @@ public class ClientController {
         var clientsList = clientRepository.findAll();
         return ResponseEntity.ok(clientsList);
     }
-
 
     // Retorna cliente pelo numero da conta
     @GetMapping("/{accountNumber}")
@@ -49,7 +49,7 @@ public class ClientController {
         if (client.isPresent()) {
             return ResponseEntity.ok(client.get());
         } else {
-            return ResponseEntity.notFound().build();
+            throw new CustomException("Cliente não encontrado.", 404);
         }
     }
 }
