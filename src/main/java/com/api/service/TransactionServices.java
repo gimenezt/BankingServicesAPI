@@ -1,6 +1,10 @@
 package com.api.service;
 
-import com.api.business.*;
+import com.api.business.BalanceUpdater;
+import com.api.business.ClientBalanceValidator;
+import com.api.business.TransactionAmountValidator;
+import com.api.business.TransactionBuilder;
+import com.api.exception.CustomException;
 import com.api.model.dto.TransactionDTO;
 import com.api.model.entity.Client;
 import com.api.model.entity.Transaction;
@@ -40,33 +44,41 @@ public class TransactionServices {
         synchronized (lockObject) {     // para tratar concorrencia
             Transaction transaction = transactionBuilder.build(dto);
 
-            // validando existencia das contas
-            boolean originExists = clientRepository.existsByAccountNumber(dto.getAccountOrigin());
-            boolean destinationExists = clientRepository.existsByAccountNumber(dto.getAccountDestination());
-
-            if (!originExists || !destinationExists) {
+            // Valida se contas existem
+            if (!clientRepository.existsByAccountNumber(dto.getAccountOrigin())) {
                 transaction.setTransactionStatus("FAILED");
-                return transactionRepository.save(transaction);
+                transactionRepository.save(transaction);
+                throw new CustomException("Conta de origem não encontrada.", 404);
             }
 
-            // validando se o valor a transacionar eh valido
+            if (!clientRepository.existsByAccountNumber(dto.getAccountDestination())) {
+                transaction.setTransactionStatus("FAILED");
+                transactionRepository.save(transaction);
+                throw new CustomException("Conta de destino não encontrada.", 404);
+            }
+
+            // Valida valor da transação
             if (!transactionAmountValidator.isValid(dto.getAmount())) {
                 transaction.setTransactionStatus("FAILED");
-                return transactionRepository.save(transaction);
+                transactionRepository.save(transaction);
+                throw new CustomException("Valor da transação inválido.", 400);
             }
 
+            // Busca clientes
             Client origin = clientRepository.findByAccountNumber(dto.getAccountOrigin()).get();
             Client destination = clientRepository.findByAccountNumber(dto.getAccountDestination()).get();
+
             BigDecimal amount = BigDecimal.valueOf(dto.getAmount());
 
-            // validando se ha saldo suficiente
+            // Valida saldo
             if (!clientBalanceValidator.hasSufficientBalance(origin, amount)) {
                 transaction.setTransactionStatus("FAILED");
-                return transactionRepository.save(transaction);
+                transactionRepository.save(transaction);
+                throw new CustomException("Saldo insuficiente para realizar a transação.", 400);
             }
 
-            // atualizando saldo da conta origem e da conta destino
             balanceUpdater.updateBalances(origin, destination, amount);
+
             clientRepository.save(origin);
             clientRepository.save(destination);
 
