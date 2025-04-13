@@ -10,6 +10,7 @@ import com.api.model.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.api.service.TransactionLogger;
 
 import java.math.BigDecimal;
 
@@ -37,6 +38,9 @@ public class TransactionServices {
     @Autowired
     private AccountEqualValidator accountEqualValidator;
 
+    @Autowired
+    private TransactionLogger transactionLogger;
+
     private final Object lockObject = new Object();
 
     @Transactional
@@ -47,28 +51,28 @@ public class TransactionServices {
             // Valida se conta origem existe
             if (!clientRepository.existsByAccountNumber(dto.getAccountOrigin())) {
                 transaction.setTransactionStatus("FAILED");
-                transactionRepository.save(transaction);
+                transactionLogger.logFailedTransaction(transaction);
                 throw new CustomException("Conta de origem não encontrada.", 404);
             }
 
             // Valida se conta destino existe
             if (!clientRepository.existsByAccountNumber(dto.getAccountDestination())) {
                 transaction.setTransactionStatus("FAILED");
-                transactionRepository.save(transaction);
+                transactionLogger.logFailedTransaction(transaction);
                 throw new CustomException("Conta de destino não encontrada.", 404);
             }
 
             // Valida se contas são iguais
             if (accountEqualValidator.equal(dto.getAccountOrigin(), dto.getAccountDestination())){
                 transaction.setTransactionStatus("FAILED");
-                transactionRepository.save(transaction);
+                transactionLogger.logFailedTransaction(transaction);
                 throw new CustomException("As contas origem e destino não podem ser iguais", 404);
             }
 
             // Valida valor da transação
             if (!transactionAmountValidator.isValid(dto.getAmount())) {
                 transaction.setTransactionStatus("FAILED");
-                transactionRepository.save(transaction);
+                transactionLogger.logFailedTransaction(transaction);
                 throw new CustomException("Valor da transação inválido.", 400);
             }
 
@@ -81,7 +85,7 @@ public class TransactionServices {
             // Valida saldo
             if (!clientBalanceValidator.hasSufficientBalance(origin, amount)) {
                 transaction.setTransactionStatus("FAILED");
-                transactionRepository.save(transaction);
+                transactionLogger.logFailedTransaction(transaction);
                 throw new CustomException("Saldo insuficiente para realizar a transação.", 400);
             }
 

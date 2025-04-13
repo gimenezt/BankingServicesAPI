@@ -23,7 +23,7 @@ public class TransactionController {
 
     // Retorna lista de transações por numero de conta origem
     @GetMapping("/{accountOrigin}")
-    public ResponseEntity<?> findByAccountOrigin(@PathVariable @Valid String accountOrigin) {
+    public ResponseEntity<?> findByAccountOrigin(@PathVariable String accountOrigin) {
         List<Transaction> transactions = transactionRepository.findByAccountOriginOrderByDatetimeDesc(accountOrigin);
 
         if (transactions.isEmpty()) {
@@ -35,7 +35,7 @@ public class TransactionController {
 
     // Criar nova transação
     @PostMapping
-    public ResponseEntity<?> createTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
+    public ResponseEntity<?> createTransaction(@RequestBody TransactionDTO transactionDTO) {
         Transaction transaction = transactionServices.processTransaction(transactionDTO);
         return ResponseEntity.ok(transaction);
     }
