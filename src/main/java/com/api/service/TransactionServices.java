@@ -16,9 +16,6 @@ import java.math.BigDecimal;
 public class TransactionServices {
 
     @Autowired
-    private ClientExistsValidator clientExistsValidator;
-
-    @Autowired
     private TransactionAmountValidator transactionAmountValidator;
 
     @Autowired
@@ -43,13 +40,15 @@ public class TransactionServices {
         synchronized (lockObject) {     // para tratar concorrencia
             Transaction transaction = transactionBuilder.build(dto);
 
-            // validando existencia das contas
-            if (!clientExistsValidator.clientsExist(dto.getAccountOrigin(), dto.getAccountDestination())) {
+            boolean originExists = clientRepository.existsByAccountNumber(dto.getAccountOrigin());
+            boolean destinationExists = clientRepository.existsByAccountNumber(dto.getAccountDestination());
+
+            if (!originExists || !destinationExists) {
                 transaction.setTransactionStatus("FAILED");
                 return transactionRepository.save(transaction);
             }
 
-            // validando de o valor a transacionar eh valido
+            // validando se o valor a transacionar eh valido
             if (!transactionAmountValidator.isValid(dto.getAmount())) {
                 transaction.setTransactionStatus("FAILED");
                 return transactionRepository.save(transaction);

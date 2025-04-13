@@ -4,8 +4,6 @@ import com.api.model.dto.TransactionDTO;
 import com.api.model.entity.Transaction;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TransactionBuilderTest {
