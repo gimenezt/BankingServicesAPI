@@ -1,9 +1,6 @@
 package com.api.service;
 
-import com.api.business.BalanceUpdater;
-import com.api.business.ClientBalanceValidator;
-import com.api.business.TransactionAmountValidator;
-import com.api.business.TransactionBuilder;
+import com.api.business.*;
 import com.api.exception.CustomException;
 import com.api.model.dto.TransactionDTO;
 import com.api.model.entity.Client;
@@ -37,24 +34,35 @@ public class TransactionServices {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private AccountEqualValidator accountEqualValidator;
+
     private final Object lockObject = new Object();
 
     @Transactional
     public Transaction processTransaction(TransactionDTO dto) {
-        synchronized (lockObject) {     // para tratar concorrencia
+        synchronized (lockObject) {     // para tratar concorrência
             Transaction transaction = transactionBuilder.build(dto);
 
-            // Valida se contas existem
+            // Valida se conta origem existe
             if (!clientRepository.existsByAccountNumber(dto.getAccountOrigin())) {
                 transaction.setTransactionStatus("FAILED");
                 transactionRepository.save(transaction);
                 throw new CustomException("Conta de origem não encontrada.", 404);
             }
 
+            // Valida se conta destino existe
             if (!clientRepository.existsByAccountNumber(dto.getAccountDestination())) {
                 transaction.setTransactionStatus("FAILED");
                 transactionRepository.save(transaction);
                 throw new CustomException("Conta de destino não encontrada.", 404);
+            }
+
+            // Valida se contas são iguais
+            if (accountEqualValidator.equal(dto.getAccountOrigin(), dto.getAccountDestination())){
+                transaction.setTransactionStatus("FAILED");
+                transactionRepository.save(transaction);
+                throw new CustomException("As contas origem e destino não podem ser iguais", 404);
             }
 
             // Valida valor da transação
