@@ -3,6 +3,7 @@ package com.api.controller;
 import com.api.business.ClientBuilder;
 import com.api.business.TransactionBuilder;
 import com.api.model.dto.TransactionDTO;
+import com.api.model.entity.Client;
 import com.api.model.repository.ClientRepository;
 import com.api.model.repository.TransactionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,8 +56,11 @@ public class TransactionControllerIntegrationTest {
 
     @Test
     void createTransaction_success() throws Exception {
-        clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
-        clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
+        Client origin = clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
+        Client destination = clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
+
+        clientRepository.save(origin);
+        clientRepository.save(destination);
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("12345");
@@ -77,8 +81,11 @@ public class TransactionControllerIntegrationTest {
 
     @Test
     void getTransactionList_success() throws Exception {
-        clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
-        clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
+        Client origin = clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
+        Client destination = clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
+
+        clientRepository.save(origin);
+        clientRepository.save(destination);
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("12345");
@@ -96,8 +103,11 @@ public class TransactionControllerIntegrationTest {
 
     @Test
     void getTransactionList_failed() throws Exception {
-        clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
-        clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
+        Client origin = clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
+        Client destination = clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
+
+        clientRepository.save(origin);
+        clientRepository.save(destination);
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("12345");
@@ -116,8 +126,11 @@ public class TransactionControllerIntegrationTest {
 
     @Test
     void getTransactionsByAccountOrigin_success() throws Exception {
-        clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
-        clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
+        Client origin = clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
+        Client destination = clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
+
+        clientRepository.save(origin);
+        clientRepository.save(destination);
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("12345");
@@ -135,8 +148,11 @@ public class TransactionControllerIntegrationTest {
 
     @Test
     void getTransactionsByAccountOrigin_failed() throws Exception {
-        clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
-        clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
+        Client origin = clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
+        Client destination = clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
+
+        clientRepository.save(origin);
+        clientRepository.save(destination);
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("12345");
