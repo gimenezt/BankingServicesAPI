@@ -4,15 +4,20 @@ import com.api.model.dto.ClientDTO;
 import com.api.model.entity.Client;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 public class ClientBuilder {
 
-    // Cria a instância de Client
     public Client build(ClientDTO dto) {
+        return build(dto.getName(), dto.getAccountNumber(), dto.getBalance());
+    }
+
+    public Client build(String name, String accountNumber, BigDecimal balance) {
         Client client = new Client();
-        client.setName(dto.getName());
-        client.setAccountNumber(dto.getAccountNumber());
-        client.setBalance(dto.getBalance());
+        client.setName(name);
+        client.setAccountNumber(accountNumber);
+        client.setBalance(balance);
         return client;
     }
 }
