@@ -2,7 +2,6 @@ package com.api.controller;
 
 import com.api.business.ClientBuilder;
 import com.api.business.TransactionBuilder;
-import com.api.model.dto.ClientDTO;
 import com.api.model.dto.TransactionDTO;
 import com.api.model.repository.ClientRepository;
 import com.api.model.repository.TransactionRepository;

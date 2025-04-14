@@ -1,6 +1,5 @@
 package com.api.business;
 
-import com.api.model.dto.ClientDTO;
 import com.api.model.entity.Client;
 
 import com.api.model.repository.ClientRepository;
