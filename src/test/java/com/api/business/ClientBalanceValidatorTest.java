@@ -3,6 +3,7 @@ package com.api.business;
 import com.api.model.entity.Client;
 
 import com.api.model.repository.ClientRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,8 @@ public class ClientBalanceValidatorTest {
 
     @Test
     public void testBalanceValidator() {
+        clientRepository.deleteAll();
+
         ClientBalanceValidator validator = new ClientBalanceValidator();
         ClientBuilder clientBuilder = new ClientBuilder();
 

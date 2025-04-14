@@ -20,6 +20,8 @@ public class BalanceUpdaterTest {
 
     @Test
     public void testUpdaterBalance() {
+        clientRepository.deleteAll();
+
         BalanceUpdater balanceUpdater = new BalanceUpdater();
         ClientBuilder clientBuilder = new ClientBuilder();
 

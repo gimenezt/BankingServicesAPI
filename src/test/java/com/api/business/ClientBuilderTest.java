@@ -20,6 +20,8 @@ class ClientBuilderTest {
 
     @Test
     void testBuildClient() {
+        clientRepository.deleteAll();
+
         ClientBuilder builder = new ClientBuilder();
 
         Client client = builder.build("Ana","123654",BigDecimal.valueOf(100));
