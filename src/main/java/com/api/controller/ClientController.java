@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -24,7 +26,7 @@ public class ClientController {
 
     // Registra novos clientes
     @PostMapping
-    public ResponseEntity register(@RequestBody @Valid ClientDTO clientDTO) {
+    public ResponseEntity<Client> register(@RequestBody @Valid ClientDTO clientDTO) {
 
         // Verifica se a conta já existe
         if (clientRepository.existsByAccountNumber(clientDTO.getAccountNumber())) {
@@ -33,7 +35,9 @@ public class ClientController {
 
         Client client = clientBuilder.build(clientDTO);
         Client savedClient = clientRepository.save(client); // Salva cliente no banco
-        return ResponseEntity.ok(savedClient);
+
+        URI location = URI.create("/client/" + savedClient.getAccountNumber());
+        return ResponseEntity.created(location).body(savedClient);
     }
 
     // Lista os clientes registrados

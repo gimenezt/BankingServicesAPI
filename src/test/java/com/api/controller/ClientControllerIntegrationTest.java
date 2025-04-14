@@ -53,7 +53,7 @@ class ClientControllerIntegrationTest {
         mockMvc.perform(post("/client")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Lilian"))
                 .andExpect(jsonPath("$.accountNumber").value("12345"))
                 .andExpect(jsonPath("$.balance").value(1000));

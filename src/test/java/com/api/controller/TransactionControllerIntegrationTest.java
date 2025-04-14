@@ -70,7 +70,7 @@ public class TransactionControllerIntegrationTest {
         mockMvc.perform(post("/transaction")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.accountOrigin").value("12345"))
                 .andExpect(jsonPath("$.accountDestination").value("54321"))
                 .andExpect(jsonPath("$.amount").value(100));

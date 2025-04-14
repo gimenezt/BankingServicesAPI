@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -37,7 +39,12 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<?> createTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
         Transaction transaction = transactionServices.processTransaction(transactionDTO);
-        return ResponseEntity.ok(transaction);
+
+        URI location = URI.create("/transaction/" + transaction.getId());
+
+        return ResponseEntity
+                .created(location)
+                .body(transaction);
     }
 
     // Lista as transações registradas
