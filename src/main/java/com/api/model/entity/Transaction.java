@@ -17,7 +17,6 @@ public class Transaction {
     @NotBlank
     private String accountDestination;
 
-    @NotBlank
     private String transactionStatus;
 
     @NotNull
