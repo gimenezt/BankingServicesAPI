@@ -2,7 +2,9 @@ package com.api.business;
 
 import com.api.model.dto.ClientDTO;
 import com.api.model.entity.Client;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ClientBuilder {
 
     // Cria a instância de Client
