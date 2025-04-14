@@ -48,15 +48,7 @@ public class TransactionControllerIntegrationTest {
         clientRepository.deleteAll();
     }
 
-    private void criarCliente(String nome, String conta, BigDecimal saldo) {
-        ClientDTO dto = new ClientDTO();
-        dto.setName(nome);
-        dto.setAccountNumber(conta);
-        dto.setBalance(saldo);
-        clientRepository.save(clientBuilder.build(dto));
-    }
-
-    private void verificarSaldoCliente(String conta, BigDecimal saldoEsperado) throws Exception {
+    private void verifyClientBalance(String conta, BigDecimal saldoEsperado) throws Exception {
         mockMvc.perform(get("/client"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.accountNumber == '" + conta + "')].balance").value(saldoEsperado.doubleValue()));
@@ -64,8 +56,8 @@ public class TransactionControllerIntegrationTest {
 
     @Test
     void createTransaction_success() throws Exception {
-        criarCliente("Lilian", "12345", BigDecimal.valueOf(1000));
-        criarCliente("Lucas", "54321", BigDecimal.valueOf(500));
+        clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
+        clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("12345");
@@ -80,14 +72,14 @@ public class TransactionControllerIntegrationTest {
                 .andExpect(jsonPath("$.accountDestination").value("54321"))
                 .andExpect(jsonPath("$.amount").value(100));
 
-        verificarSaldoCliente("12345", BigDecimal.valueOf(900));
-        verificarSaldoCliente("54321", BigDecimal.valueOf(600));
+        verifyClientBalance("12345", BigDecimal.valueOf(900));
+        verifyClientBalance("54321", BigDecimal.valueOf(600));
     }
 
     @Test
     void getTransactionList_success() throws Exception {
-        criarCliente("Lilian", "12345", BigDecimal.valueOf(1000));
-        criarCliente("Lucas", "54321", BigDecimal.valueOf(500));
+        clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
+        clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("12345");
@@ -100,13 +92,13 @@ public class TransactionControllerIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].accountOrigin").value("12345"));
 
-        verificarSaldoCliente("12345", BigDecimal.valueOf(1000));
+        verifyClientBalance("12345", BigDecimal.valueOf(1000));
     }
 
     @Test
     void getTransactionList_failed() throws Exception {
-        criarCliente("Lilian", "12345", BigDecimal.valueOf(1000));
-        criarCliente("Lucas", "54321", BigDecimal.valueOf(500));
+        clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
+        clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("12345");
@@ -119,14 +111,14 @@ public class TransactionControllerIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].accountOrigin").value("12345"));
 
-        verificarSaldoCliente("12345", BigDecimal.valueOf(1000));
-        verificarSaldoCliente("54321", BigDecimal.valueOf(500));
+        verifyClientBalance("12345", BigDecimal.valueOf(1000));
+        verifyClientBalance("54321", BigDecimal.valueOf(500));
     }
 
     @Test
     void getTransactionsByAccountOrigin_success() throws Exception {
-        criarCliente("Lilian", "12345", BigDecimal.valueOf(1000));
-        criarCliente("Lucas", "54321", BigDecimal.valueOf(500));
+        clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
+        clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("12345");
@@ -139,13 +131,13 @@ public class TransactionControllerIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].accountDestination").value("54321"));
 
-        verificarSaldoCliente("12345", BigDecimal.valueOf(1000));
+        verifyClientBalance("12345", BigDecimal.valueOf(1000));
     }
 
     @Test
     void getTransactionsByAccountOrigin_failed() throws Exception {
-        criarCliente("Lilian", "12345", BigDecimal.valueOf(1000));
-        criarCliente("Lucas", "54321", BigDecimal.valueOf(500));
+        clientBuilder.build("Lilian", "12345", BigDecimal.valueOf(1000));
+        clientBuilder.build("Lucas", "54321", BigDecimal.valueOf(500));
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("12345");
@@ -158,8 +150,8 @@ public class TransactionControllerIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].accountDestination").value("54321"));
 
-        verificarSaldoCliente("12345", BigDecimal.valueOf(1000));
-        verificarSaldoCliente("54321", BigDecimal.valueOf(500));
+        verifyClientBalance("12345", BigDecimal.valueOf(1000));
+        verifyClientBalance("54321", BigDecimal.valueOf(500));
     }
 
     @Test

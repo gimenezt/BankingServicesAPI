@@ -1,5 +1,6 @@
 package com.api.controller;
 
+import com.api.business.ClientBuilder;
 import com.api.model.dto.ClientDTO;
 import com.api.model.entity.Client;
 import com.api.model.repository.ClientRepository;
@@ -30,6 +31,9 @@ class ClientControllerIntegrationTest {
     private ClientRepository clientRepository;
 
     @Autowired
+    ClientBuilder clientBuilder;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
@@ -38,17 +42,16 @@ class ClientControllerIntegrationTest {
     }
 
     @Test
-
     // Registro com sucesso de cliente
     void registerClient_success() throws Exception {
-        ClientDTO client = new ClientDTO();
-        client.setName("Lilian");
-        client.setAccountNumber("12345");
-        client.setBalance(BigDecimal.valueOf(1000));
+        ClientDTO dto = new ClientDTO();
+        dto.setAccountNumber("12345");
+        dto.setBalance(BigDecimal.valueOf(1000));
+        dto.setName("Lilian");
 
         mockMvc.perform(post("/client")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(client)))
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Lilian"))
                 .andExpect(jsonPath("$.accountNumber").value("12345"))
@@ -58,16 +61,10 @@ class ClientControllerIntegrationTest {
     @Test
     // Teste para registro de contas duplicadas
     void registerClient_duplicateAccountNumber() throws Exception {
-        Client existingClient = new Client();
-        existingClient.setName("Ana");
-        existingClient.setAccountNumber("99999");
-        existingClient.setBalance(BigDecimal.valueOf(2000));
+        Client existingClient = clientBuilder.build("Ana","99999",BigDecimal.valueOf(2000));
         clientRepository.save(existingClient);
 
-        ClientDTO duplicateClient = new ClientDTO();
-        duplicateClient.setName("João");
-        duplicateClient.setAccountNumber("99999"); // mesmo número
-        duplicateClient.setBalance(BigDecimal.valueOf(500));
+        Client duplicateClient = clientBuilder.build("João","99999",BigDecimal.valueOf(500));
 
         mockMvc.perform(post("/client")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,20 +76,9 @@ class ClientControllerIntegrationTest {
     @Test
     // Teste para verificar retorno de lista de clientes
     void clientList() throws Exception {
-        Client client1 = new Client();
-        client1.setName("Carlos");
-        client1.setAccountNumber("77777");
-        client1.setBalance(BigDecimal.valueOf(1500));
-
-        Client client2 = new Client();
-        client2.setName("Mariana");
-        client2.setAccountNumber("88888");
-        client2.setBalance(BigDecimal.valueOf(2500));
-
-        Client client3 = new Client();
-        client3.setName("João");
-        client3.setAccountNumber("99999");
-        client3.setBalance(BigDecimal.valueOf(3500));
+        Client client1 = clientBuilder.build("Carlos","77777",BigDecimal.valueOf(1500));
+        Client client2 = clientBuilder.build("Mariana","88888",BigDecimal.valueOf(2500));
+        Client client3 = clientBuilder.build("João","99999",BigDecimal.valueOf(3500));
 
         clientRepository.save(client1);
         clientRepository.save(client2);
@@ -110,10 +96,7 @@ class ClientControllerIntegrationTest {
     @Test
     // Teste para trazer informações do cliente que existe pelo número de conta
     void findClient_success() throws Exception {
-        Client client = new Client();
-        client.setName("Julia");
-        client.setAccountNumber("88888");
-        client.setBalance(BigDecimal.valueOf(3000));
+        Client client = clientBuilder.build("Julia","88888",BigDecimal.valueOf(3000));
         clientRepository.save(client);
 
         mockMvc.perform(get("/client/88888"))
