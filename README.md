@@ -38,6 +38,8 @@ mvn test
 ~~~
 
 ## Endpoints da API
+A porta utilizada para a API é **8080**. Portanto, quando for utilizar os endpoimts, utilize: `http://localhost:8080/`.
+
 ### 1. `POST /client` - Cadastro um cliente
 - Requisição:
     ~~~json
