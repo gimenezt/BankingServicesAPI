@@ -1,7 +1,7 @@
 package com.api.service;
 
 import com.api.business.ClientBuilder;
-import com.api.model.dto.ClientDTO;
+import com.api.exception.CustomException;
 import com.api.model.dto.TransactionDTO;
 import com.api.model.entity.Client;
 import com.api.model.entity.Transaction;
@@ -26,6 +26,9 @@ class TransactionServicesTest {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private ClientBuilder clientBuilder;
+
     // Limpa a tabela antes de cada teste
     @BeforeEach
     void setup() {
@@ -35,19 +38,8 @@ class TransactionServicesTest {
     // Teste de transação com sucesso
     @Test
     void testProcessTransaction_success() {
-        ClientBuilder clientBuilder = new ClientBuilder();
-
-        ClientDTO originDTO = new ClientDTO();
-        originDTO.setName("Lilian");
-        originDTO.setAccountNumber("123456");
-        originDTO.setBalance(new BigDecimal("1000"));
-        Client origin = clientBuilder.build(originDTO);
-
-        ClientDTO destinationDTO = new ClientDTO();
-        destinationDTO.setName("Lucas");
-        destinationDTO.setAccountNumber("223456");
-        destinationDTO.setBalance(new BigDecimal("200"));
-        Client destination = clientBuilder.build(destinationDTO);
+        Client origin = clientBuilder.build("Lilian", "123456", BigDecimal.valueOf(1000));
+        Client destination = clientBuilder.build("Lucas", "223456", BigDecimal.valueOf(200));
 
         clientRepository.save(origin);
         clientRepository.save(destination);
@@ -67,33 +59,26 @@ class TransactionServicesTest {
     // Teste de transação para uma conta que não existe
     @Test
     void testProcessTransaction_accountDoesNotExist() {
-        Client origin = new Client();
-        origin.setName("Caio");
-        origin.setAccountNumber("123456");
-        origin.setBalance(new BigDecimal("100.00"));
+        Client origin = clientBuilder.build("Caio", "123456", BigDecimal.valueOf(100));
+        clientRepository.save(origin);
 
         TransactionDTO dto = new TransactionDTO();
         dto.setAccountOrigin("123456");
-        dto.setAccountDestination("999999"); // não existe
+        dto.setAccountDestination("999999"); // conta inexistente
         dto.setAmount(100.0);
 
-        Transaction result = transactionServices.processTransaction(dto);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            transactionServices.processTransaction(dto);
+        });
 
-        assertEquals("FAILED", result.getTransactionStatus());
+        assertEquals("Conta de destino não encontrada.", exception.getMessage());
     }
 
     // Teste de transação com saldo insuficiente
     @Test
     void testProcessTransaction_insufficientBalance() {
-        Client origin = new Client();
-        origin.setName("Caio");
-        origin.setAccountNumber("123456");
-        origin.setBalance(new BigDecimal("50.00"));
-
-        Client destination = new Client();
-        destination.setName("Ana");
-        destination.setAccountNumber("223456");
-        destination.setBalance(new BigDecimal("50.00"));
+        Client origin = clientBuilder.build("Caio", "123456", BigDecimal.valueOf(50));
+        Client destination = clientBuilder.build("Ana", "223456", BigDecimal.valueOf(50));
 
         clientRepository.save(origin);
         clientRepository.save(destination);
@@ -103,23 +88,18 @@ class TransactionServicesTest {
         dto.setAccountDestination("223456");
         dto.setAmount(100.0); // maior do que o saldo do cliente origem
 
-        Transaction result = transactionServices.processTransaction(dto);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            transactionServices.processTransaction(dto);
+        });
 
-        assertEquals("FAILED", result.getTransactionStatus());
+        assertEquals("Saldo insuficiente para realizar a transação.", exception.getMessage());
     }
 
     // Teste de transação com valor de transação fora da regra de negócio
     @Test
     void testProcessTransaction_amountBiggerThan100() {
-        Client origin = new Client();
-        origin.setName("Caio");
-        origin.setAccountNumber("123456");
-        origin.setBalance(new BigDecimal("1000.00"));
-
-        Client destination = new Client();
-        destination.setName("Ana");
-        destination.setAccountNumber("223456");
-        destination.setBalance(new BigDecimal("200.00"));
+        Client origin = clientBuilder.build("Caio", "123456", BigDecimal.valueOf(1000));
+        Client destination = clientBuilder.build("Ana", "223456", BigDecimal.valueOf(200));
 
         clientRepository.save(origin);
         clientRepository.save(destination);
@@ -129,8 +109,10 @@ class TransactionServicesTest {
         dto.setAccountDestination("223456");
         dto.setAmount(200.00);
 
-        Transaction result = transactionServices.processTransaction(dto);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            transactionServices.processTransaction(dto);
+        });
 
-        assertEquals("FAILED", result.getTransactionStatus());
+        assertEquals("Valor da transação inválido.", exception.getMessage());
     }
 }

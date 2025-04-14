@@ -42,13 +42,14 @@ class ClientControllerIntegrationTest {
     }
 
     @Test
+
     // Registro com sucesso de cliente
     void registerClient_success() throws Exception {
         ClientDTO dto = new ClientDTO();
         dto.setAccountNumber("12345");
         dto.setBalance(BigDecimal.valueOf(1000));
         dto.setName("Lilian");
-
+        
         mockMvc.perform(post("/client")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
