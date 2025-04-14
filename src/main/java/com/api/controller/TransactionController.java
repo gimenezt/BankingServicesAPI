@@ -5,6 +5,7 @@ import com.api.model.repository.TransactionRepository;
 import com.api.model.dto.TransactionDTO;
 import com.api.service.TransactionServices;
 import com.api.exception.CustomException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class TransactionController {
 
     // Retorna lista de transações por número de conta informado em ordem decrescente de datetime
     @GetMapping("/{accountOrigin}")
-    public ResponseEntity<?> findByAccountOrigin(@PathVariable String accountOrigin) {
+    public ResponseEntity<?> findByAccountOrigin(@PathVariable @Valid String accountOrigin) {
         List<Transaction> transactions = transactionRepository.findByAccountOriginOrderByDatetimeDesc(accountOrigin);
 
         if (transactions.isEmpty()) {
@@ -34,7 +35,7 @@ public class TransactionController {
 
     // Processa nova transação
     @PostMapping
-    public ResponseEntity<?> createTransaction(@RequestBody TransactionDTO transactionDTO) {
+    public ResponseEntity<?> createTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
         Transaction transaction = transactionServices.processTransaction(transactionDTO);
         return ResponseEntity.ok(transaction);
     }

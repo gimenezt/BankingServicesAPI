@@ -1,5 +1,6 @@
 package com.api.controller;
 
+import com.api.business.ClientBuilder;
 import com.api.model.repository.ClientRepository;
 import com.api.model.entity.Client;
 import com.api.model.dto.ClientDTO;
@@ -17,21 +18,21 @@ public class ClientController {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private ClientBuilder clientBuilder;
+
+
     // Registra novos clientes
     @PostMapping
     public ResponseEntity register(@RequestBody @Valid ClientDTO clientDTO) {
+
         // Verifica se a conta já existe
         if (clientRepository.existsByAccountNumber(clientDTO.getAccountNumber())) {
             throw new CustomException("Conta já existe.", 400);
         }
 
-        Client client = new Client();
-        client.setName(clientDTO.getName());
-        client.setAccountNumber(clientDTO.getAccountNumber());
-        client.setBalance(clientDTO.getBalance());
-
-        // Salva o cliente no banco
-        Client savedClient = clientRepository.save(client);
+        Client client = clientBuilder.build(clientDTO);
+        Client savedClient = clientRepository.save(client); // Salva cliente no banco
         return ResponseEntity.ok(savedClient);
     }
 

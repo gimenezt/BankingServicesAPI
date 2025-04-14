@@ -1,5 +1,7 @@
 package com.api.service;
 
+import com.api.business.ClientBuilder;
+import com.api.model.dto.ClientDTO;
 import com.api.model.dto.TransactionDTO;
 import com.api.model.entity.Client;
 import com.api.model.entity.Transaction;
@@ -33,15 +35,19 @@ class TransactionServicesTest {
     // Teste de transação com sucesso
     @Test
     void testProcessTransaction_success() {
-        Client origin = new Client();
-        origin.setName("Caio");
-        origin.setAccountNumber("123456");
-        origin.setBalance(new BigDecimal("1000.00"));
+        ClientBuilder clientBuilder = new ClientBuilder();
 
-        Client destination = new Client();
-        destination.setName("Ana");
-        destination.setAccountNumber("223456");
-        destination.setBalance(new BigDecimal("200.00"));
+        ClientDTO originDTO = new ClientDTO();
+        originDTO.setName("Lilian");
+        originDTO.setAccountNumber("123456");
+        originDTO.setBalance(new BigDecimal("1000"));
+        Client origin = clientBuilder.build(originDTO);
+
+        ClientDTO destinationDTO = new ClientDTO();
+        destinationDTO.setName("Lucas");
+        destinationDTO.setAccountNumber("223456");
+        destinationDTO.setBalance(new BigDecimal("200"));
+        Client destination = clientBuilder.build(destinationDTO);
 
         clientRepository.save(origin);
         clientRepository.save(destination);

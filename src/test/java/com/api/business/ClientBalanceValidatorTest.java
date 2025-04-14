@@ -1,5 +1,6 @@
 package com.api.business;
 
+import com.api.model.dto.ClientDTO;
 import com.api.model.entity.Client;
 
 import org.junit.jupiter.api.Test;
@@ -12,8 +13,13 @@ public class ClientBalanceValidatorTest {
     public void testBalanceValidator() {
         ClientBalanceValidator validator = new ClientBalanceValidator();
 
-        Client origin = new Client();
-        origin.setBalance(new BigDecimal("100.00"));
+        ClientBuilder clientBuilder = new ClientBuilder();
+
+        ClientDTO originDTO = new ClientDTO();
+        originDTO.setName("Lilian");
+        originDTO.setAccountNumber("111");
+        originDTO.setBalance(new BigDecimal("100"));
+        Client origin = clientBuilder.build(originDTO);
 
         // Teste para transacionar um valor menor que o saldo
         assertTrue(validator.hasSufficientBalance(origin, new BigDecimal("70.00")));
